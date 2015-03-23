@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <string.h> /* memset */
 #include <ncurses.h> // Para dibujar
+#include <math.h> // Para el sqrt y la pow, pow pow pow, what does the fox say?
+
+/* NOTA: Para compilar este archivo: gcc -o test prueba.c -lncurses -lm */
 
 int eow = 0; // EOW stands for End of the World
 
 char a; // Almacén temporal de los caracteres obtenidos
 char cad[50]; // Arreglo de paso para enviar a miArreglo
 char miArreglo[99][99]; // Arreglo final para las cadenas obtenidas
+int penDown = 1; // Estado de la "pluma"
 
 char coordenadas[99][99]; // Espera... esto lo voy a ocupar en algún momento
 char misCoordenadas[99][2][99]; // Nivel 1: número de par, Nivel 2: x ó y, Nivel 3: string de contenido.
@@ -15,32 +19,52 @@ void drawThis(float e1, float ye1, float e2, float ye2){
 	float x1 = e1, y1 = ye1, x2 = e2, y2 = ye2;
 
 	initscr(); // Inicializa la pantalla de dibujo
-	
-	// Este bloque puede ser innecesario
-	move(y1,x1); // Al parecer move(Y[filas],X[columnas]); Dafuq
-	addstr("o");
-	move(y2,x2);
-	addstr("o");
-	// ---------------------------------
 
-	int i;
-	float step = (y2 - y1) / (x2-x1); // Calcula el step, siento que aquí falta algo
-	
-	// Aquí dibuja de verdad :0
-	if ( x1 > x2 ) {
-		for ( i = 0; i >= (x2 - x1); i-- ) {
-			move(y1 + (step * i),x1 + i);
-			addstr("o");
+	int i; // FIX THIS: !!!
+	float step;
+	if ( sqrt(pow(y2 - y1,2)) > sqrt(pow(x2 - x1,2)) ) {
+		if ( (x2 - x1) != 0 ) {
+			step = (y2 - y1) / (x2 - x1);
+		} else {
+			step = 0;
 		}
 	} else {
-		for ( i = 0; i <= (x2 - x1); i++ ) {
-			move(y1 + (step * i),x1 + i);
-			addstr("o");
+		if ( (y2 - y1) != 0 ) {
+			step = (y2 - y1) / (x2 - x1);
+		} else {
+			step = 0;
+		}
+	}
+	
+	// Aquí dibuja de verdad :0
+	if ( sqrt(pow(y2 - y1,2)) > sqrt(pow(x2 - x1,2)) ) {
+		if ( y1 > y2 ) {
+			for ( i = 0; i >= (y2 - y1); i-- ) {
+				move(y1 + i,x1 + (step * i));
+				addstr("o");
+			}
+		} else {
+			for ( i = 0; i <= (y2 - y1); i++ ) {
+				move(y1 + i,x1 + (step * i));
+				addstr("o");
+			}
+		}
+	} else {
+		if ( x1 > x2 ) {
+			for ( i = 0; i >= (x2 - x1); i-- ) {
+				move(y1 + (step * i),x1 + i);
+				addstr("o");
+			}
+		} else {
+			for ( i = 0; i <= (x2 - x1); i++ ) {
+				move(y1 + (step * i),x1 + i);
+				addstr("o");
+			}
 		}
 	}
 
 	refresh(); // Actualiza el dibujo
-	sleep(3); // Pausa el programa x segundos
+	sleep(1); // Pausa el programa x segundos
 	endwin(); // Cierra la pantalla de dibujo
 }
 
@@ -189,7 +213,7 @@ void main(){
 
 		int l = 0;
 		while( misCoordenadas[l][0][0] != '\0' ) {
-			printf("%s", misCoordenadas[l][0]);
+			printf("[%d]: %s", l, misCoordenadas[l][0]);
 			if ( isdigit(misCoordenadas[l][0][0]) ) {
 				printf(",%s\n", misCoordenadas[l][1]);
 			} else {
@@ -200,19 +224,29 @@ void main(){
 
 		printf("\nEXECUTING DRAWING TOOL...\n\n");
 
-		int m = 0;
-		while( misCoordenadas[m][0][0] != '\0' ) {
-			if ( ( misCoordenadas[m-1][0][0] != '\0' || isdigit(misCoordenadas[m-1][0][0]) ) && isdigit(misCoordenadas[m][0][0]) ) {
-				drawThis( atoi(misCoordenadas[m-1][0]), atoi(misCoordenadas[m-1][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
-				m += 2;
-			}
+		int m = 1;
+		while ( misCoordenadas[m][0][0] != '\0' ) {
 			if ( isdigit(misCoordenadas[m][0][0]) ) {
-				
+				int n = 1;
+				while ( !isdigit(misCoordenadas[m-n][0][0]) ) {
+					n++;
+				}
+				if ( penDown == 1 ) {
+					printf("%d,%d : %d,%d\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]));
+					drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
+				}
+				m++;
 			} else {
-				printf("\n");
+				if ( strcmp(misCoordenadas[m][0], "up") == 0 ) {
+					penDown = 0;
+				} else if ( strcmp(misCoordenadas[m][0], "down") == 0 ) {
+					penDown = 1;
+				}
 				m++;
 			}
-		}		
+		}
+
+		printf("\nFIN DEL PROGRAMA\n");	
 
 	}
 
