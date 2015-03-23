@@ -238,6 +238,7 @@ void main(){
 				m++;
 			} else {
 				if ( strcmp(misCoordenadas[m][0], "up") == 0 ) {
+					printf("Not drawn: ");
 					penDown = 0;
 				} else if ( strcmp(misCoordenadas[m][0], "down") == 0 ) {
 					penDown = 1;
