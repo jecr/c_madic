@@ -225,24 +225,42 @@ void main(){
 		printf("\nEXECUTING DRAWING TOOL...\n\n");
 
 		int m = 1;
+		int aFlag = 0;
 		while ( misCoordenadas[m][0][0] != '\0' ) {
-			if ( isdigit(misCoordenadas[m][0][0]) ) {
+			if ( isdigit(misCoordenadas[m][0][0]) && aFlag == 0  ) {
 				int n = 1;
 				while ( !isdigit(misCoordenadas[m-n][0][0]) ) {
-					n++;
+					if ( m - n > 0 ) {
+						n++;
+					} else {
+						aFlag = 1;
+						break;
+					}
 				}
-				if ( penDown == 1 ) {
-					printf("%d,%d : %d,%d\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]));
-					drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
+				if ( aFlag == 0 ) {
+					if ( penDown == 1 ) {
+						printf("%d,%d : %d,%d\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]));
+						drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
+					}
+					m++;
 				}
-				m++;
 			} else {
-				if ( strcmp(misCoordenadas[m][0], "up") == 0 ) {
-					printf("Not drawn: ");
-					penDown = 0;
-				} else if ( strcmp(misCoordenadas[m][0], "down") == 0 ) {
-					penDown = 1;
+				if ( m == 1 && aFlag == 1 ) {
+					if ( strcmp(misCoordenadas[m-1][0], "up") == 0 ) {
+						printf("Pen is up \n");
+						penDown = 0;
+					} else if ( strcmp(misCoordenadas[m-1][0], "down") == 0 ) {
+						penDown = 1;
+					}
+				} else {
+					if ( strcmp(misCoordenadas[m][0], "up") == 0 ) {
+						printf("Pen is up \n");
+						penDown = 0;
+					} else if ( strcmp(misCoordenadas[m][0], "down") == 0 ) {
+						penDown = 1;
+					}
 				}
+				aFlag = 0;
 				m++;
 			}
 		}
