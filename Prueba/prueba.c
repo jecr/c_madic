@@ -22,41 +22,52 @@ void drawThis(float e1, float ye1, float e2, float ye2){
 
 	int i; // FIX THIS: !!!
 	float step;
-	if ( sqrt(pow(y2 - y1,2)) > sqrt(pow(x2 - x1,2)) ) {
-		if ( (x2 - x1) != 0 ) {
-			step = (y2 - y1) / (x2 - x1);
+	float yDiff = y2 - y1, xDiff = x2 - x1;
+
+	if ( yDiff > xDiff ) {
+		if ( (xDiff) != 0 ) {
+			if ( sqrt(pow(yDiff,2)) > sqrt(pow(xDiff,2)) ) {
+				step = (xDiff) / (yDiff);
+			} else {
+				step = (yDiff) / (xDiff);
+			}
 		} else {
 			step = 0;
 		}
 	} else {
-		if ( (y2 - y1) != 0 ) {
-			step = (y2 - y1) / (x2 - x1);
+		if ( (yDiff) != 0 ) {
+			if ( sqrt(pow(yDiff,2)) > sqrt(pow(xDiff,2)) ) {
+				step = (xDiff) / (yDiff);
+			} else {
+				step = (yDiff) / (xDiff);
+			}
 		} else {
 			step = 0;
 		}
 	}
-	
+
 	// Aquí dibuja de verdad :0
-	if ( sqrt(pow(y2 - y1,2)) > sqrt(pow(x2 - x1,2)) ) {
+	if ( sqrt(pow(yDiff,2)) > sqrt(pow(xDiff,2)) ) {
 		if ( y1 > y2 ) {
-			for ( i = 0; i >= (y2 - y1); i-- ) {
+			for ( i = 0; i >= (yDiff); i-- ) {
 				move(y1 + i,x1 + (step * i));
 				addstr("o");
 			}
 		} else {
-			for ( i = 0; i <= (y2 - y1); i++ ) {
+			for ( i = 0; i <= (yDiff); i++ ) {
+				//printf("%f, %f, step: %f\n", y1 + i, x1 + (step * i), step);
 				move(y1 + i,x1 + (step * i));
 				addstr("o");
 			}
 		}
 	} else {
 		if ( x1 > x2 ) {
-			for ( i = 0; i >= (x2 - x1); i-- ) {
+			for ( i = 0; i >= (xDiff); i-- ) {
 				move(y1 + (step * i),x1 + i);
 				addstr("o");
 			}
 		} else {
-			for ( i = 0; i <= (x2 - x1); i++ ) {
+			for ( i = 0; i <= (xDiff); i++ ) {
 				move(y1 + (step * i),x1 + i);
 				addstr("o");
 			}
@@ -239,7 +250,7 @@ void main(){
 				}
 				if ( aFlag == 0 ) {
 					if ( penDown == 1 ) {
-						printf("%d,%d : %d,%d\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]));
+						printf("%d,%d : %d,%d || %f\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]), atan( (float)(atoi(misCoordenadas[m-n][1]) - atoi(misCoordenadas[m][1])) / (float)(atoi(misCoordenadas[m-n][0]) - atoi(misCoordenadas[m][0])) ) * (180 / 3.14159265359) );
 						drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
 					}
 					m++;
