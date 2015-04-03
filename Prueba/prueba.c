@@ -237,6 +237,8 @@ void main(){
 
 		int m = 1;
 		int aFlag = 0;
+		float angle;
+		int xVal, yVal;
 		while ( misCoordenadas[m][0][0] != '\0' ) {
 			if ( isdigit(misCoordenadas[m][0][0]) && aFlag == 0  ) {
 				int n = 1;
@@ -250,8 +252,20 @@ void main(){
 				}
 				if ( aFlag == 0 ) {
 					if ( penDown == 1 ) {
-						printf("%d,%d : %d,%d || %f\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]), atan( (float)(atoi(misCoordenadas[m-n][1]) - atoi(misCoordenadas[m][1])) / (float)(atoi(misCoordenadas[m-n][0]) - atoi(misCoordenadas[m][0])) ) * (180 / 3.14159265359) );
-						drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]) );
+						angle = atan( (float)(atoi(misCoordenadas[m-n][1]) - atoi(misCoordenadas[m][1])) / (float)(atoi(misCoordenadas[m-n][0]) - atoi(misCoordenadas[m][0])) ) * (180 / 3.14159265359);
+						if ( sqrt(pow(angle,2)) < 30 ) {
+							xVal = atoi(misCoordenadas[m][0]);
+							yVal = atoi(misCoordenadas[m-n][1]);
+						} else if ( sqrt(pow(angle,2)) > 60 && sqrt(pow(angle,2)) < 90 ) {
+							xVal = atoi(misCoordenadas[m-n][0]);
+							yVal = atoi(misCoordenadas[m][1]);
+						} else {
+							yVal = atoi(misCoordenadas[m][1]);
+							xVal = atoi(misCoordenadas[m][0]);
+						}
+						printf("%d, %d\n", xVal, yVal );
+						printf("%d,%d : %d,%d || %f\n", atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), atoi(misCoordenadas[m][0]), atoi(misCoordenadas[m][1]), angle);
+						drawThis( atoi(misCoordenadas[m-n][0]), atoi(misCoordenadas[m-n][1]), xVal, yVal );
 					}
 					m++;
 				}
